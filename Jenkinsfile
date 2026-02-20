@@ -24,7 +24,7 @@ pipeline {
 
         stage('Checkout Source') {
             steps {
-                git branch: 'main',
+                git branch: 'master',
                     credentialsId: 'github-cred',
                     url: 'https://github.com/pratyush934/register-app'
             }
