@@ -29,32 +29,38 @@ pipeline {
                     url: 'https://github.com/pratyush934/register-app'
             }
         }
-
-        stage('Build Application') {
+        
+         stage('Build Application') {
             steps {
-                sh 'mvn clean package -DskipTests=true'
+                dir('webapp') {
+                    sh 'mvn clean package -DskipTests=true'
+                }
             }
         }
 
         stage('Test Application') {
             steps {
-                sh 'mvn test'
+                dir('webapp') {
+                    sh 'mvn test'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar') {
-                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                        sh '''
-                          mvn sonar:sonar \
-                          -Dsonar.login=$SONAR_TOKEN
-                        '''
+                dir('webapp') {
+                    withSonarQubeEnv('sonar') {
+                        withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                            sh '''
+                              mvn sonar:sonar \
+                              -Dsonar.login=$SONAR_TOKEN
+                            '''
+                        }
                     }
                 }
             }
         }
-
+        
         stage('Quality Gate') {
             steps {
                 
